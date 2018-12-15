@@ -1,0 +1,9 @@
+[submodule "extern/logger"]
+	path = extern/logger
+	url = https://github.com/disrado/logger.git
+[submodule "extern/libpqxx"]
+	path = extern/libpqxx
+	url = https://github.com/akazantsev/libpqxx.git
+[submodule "extern/flame"]
+	path = extern/flame
+	url = https://github.com/disrado/FlameEngine.git
