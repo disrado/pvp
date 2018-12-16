@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(db LANGUAGES CXX)
+project(database LANGUAGES CXX)
 
 include(cotire)
 
@@ -14,11 +14,10 @@ set(${PROJECT_NAME}_MISC
 
 add_library(${PROJECT_NAME} SHARED
 		${${PROJECT_NAME}_SOURCES}
-		${${PROJECT_NAME}_WORKERS_SOURCES}
 		${${PROJECT_NAME}_MISC}
 )
 
-add_library(insta::db ALIAS ${PROJECT_NAME})
+add_library(pvp::db ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -34,18 +33,19 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
-		${CONAN_LIBS}
-		pqxx_shared
+		flame::db
 		logger
-		timer
+	PRIVATE
+		${CONAN_LIBS}
+
 )
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC
-		${CONAN_LIBS}
-		${PROJECT_SOURCE_DIR}/include
+		include
 	PRIVATE
-		${PROJECT_SOURCE_DIR}/src
+		src
+		${CONAN_LIBS}
 )
 
 set(COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)

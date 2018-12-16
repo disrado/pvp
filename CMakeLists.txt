@@ -12,6 +12,8 @@ conan_basic_setup()
 
 set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/extern)
 
+add_subdirectory(extern/flame)
+add_subdirectory(extern/logger)
 add_subdirectory(modules/db)
 
 if (ENABLE_TESTING)
