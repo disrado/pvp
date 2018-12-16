@@ -1,6 +1,3 @@
-#include <iostream>
+#include "pch.hpp"
 
-int main()
-{
-	return fmt::format("One: {}", 1);
-}
+#include "db/AccountWork.hpp"
