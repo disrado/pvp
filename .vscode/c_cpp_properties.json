@@ -6,13 +6,17 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/modules/db/src/pch.h",
                 "${workspaceFolder}/extern/libpqxx/include",
-                "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/56e0cf6d16ee57367a0661ab743f4e43b29223f8/include"
+                "/home/nik/sources/pvp/modules/db/src/pch.hpp",
+                "/home/nik/sources/pvp/modules/db/include/",
+                "/usr/include/c++/8.2.1/cstdint",
+                "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/56e0cf6d16ee57367a0661ab743f4e43b29223f8/include",
+                "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/038f8796e196b3dba76fcc5fd4ef5d3d9c6866ec/include"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/clang",
+            "compilerPath": "/usr/bin/g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
-            "intelliSenseMode": "clang-x64"
+            "intelliSenseMode": "gcc-x64"
         }
     ],
     "version": 4
