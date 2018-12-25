@@ -1,0 +1,17 @@
+-- migrate:up
+
+CREATE TABLE match(
+	id SERIAL NOT NULL,
+	winner INT NOT NULL,
+	loser INT NOT NULL,
+	begin_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	end_at TIMESTAMP NOT NULL,
+	duration TIME NOT NULL,
+	PRIMARY KEY(id),
+	FOREIGN KEY(winner) REFERENCES account(id) ON DELETE CASCADE,
+	FOREIGN KEY(loser) REFERENCES account(id) ON DELETE CASCADE
+);
+
+-- migrate:down
+
+DROP TABLE match CASCADE;
