@@ -7,22 +7,24 @@ include(cotire)
 set(${PROJECT_NAME}_HEADERS
 	include/db/AccountWork.hpp
 	include/db/Aliases.hpp
+	include/db/Pager.hpp
+	include/db/TypeConversion.hpp
 )
 
 set(${PROJECT_NAME}_HEADERS_MODELS
 	include/db/models/Account.hpp
 	include/db/models/Filter.hpp
-	include/db/models/TypeConversion.hpp
 )
 
 set(${PROJECT_NAME}_SOURCES
 	src/AccountWork.cpp
+	src/Pager.cpp
+	src/TypeConversion.cpp
 )
 
 set(${PROJECT_NAME}_SOURCES_MODELS
 	src/models/Account.cpp
 	src/models/Filter.cpp
-	src/models/TypeConversion.cpp
 )
 
 set(${PROJECT_NAME}_MISC

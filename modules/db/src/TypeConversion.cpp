@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "db/models/TypeConversion.hpp"
+#include "db/TypeConversion.hpp"
 
 namespace db
 {
@@ -29,9 +29,9 @@ AccountStatus AccountStatusFromStr(const std::string& str)
 }
 
 
-std::string ToStr(const bool status)
+std::string ToStr(const bool value)
 {
-	return status ? "1" : "0";
+	return value ? "1" : "0";
 }
 
 
@@ -42,6 +42,23 @@ bool BoolFromStr(const std::string& str)
 	} else {
 		return false;
 	}
+}
+
+
+std::string ToStr(const size_t value)
+{
+	return std::to_string(value);
+}
+
+
+size_t SizetFromStr(const std::string& str)
+{
+	size_t result;
+
+	std::istringstream stream(str);
+	stream >> result;
+
+	return result;
 }
 
 

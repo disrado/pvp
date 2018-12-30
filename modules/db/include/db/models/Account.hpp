@@ -21,7 +21,7 @@ public:
 		Filter();
 
 	public:
-		std::string ToSql(const std::string& key, Item<>::Escape escape) const;
+		std::string ToSql(Item<>::Escape escape) const;
 
 	public:
 		Item<ID> id;
@@ -30,23 +30,23 @@ public:
 		Item<> question;
 		Item<> answer;
 		Item<> name;
-		ItemRange<Timestamp> createdAt;
-		ItemRange<Timestamp> loginAt;
+		Range<Timestamp> createdAt;
+		Range<Timestamp> loginAt;
 		Item<> status2fa;
 		Item<> status;
 	};
 
 public:
-	ID Id();
-	std::string Email();
-	std::string Pwd();
-	std::string Question();
-	std::string Answer();
-	std::string Name();
-	std::string CreatedAt();
-	std::string LoginAt();
-	std::string Status2fa();
-	std::string Status();
+	ID Id() const;
+	std::string Email() const;
+	std::string Pwd() const;
+	std::string Question() const;
+	std::string Answer() const;
+	std::string Name() const;
+	std::string CreatedAt() const;
+	std::string LoginAt() const;
+	std::string Status2fa() const;
+	std::string Status() const;
 
 	void Id(const ID id);
 	void Email(const std::string& email);
@@ -73,20 +73,6 @@ public:
 	bool m_status2fa;
 	AccountStatus m_status;
 };
-
-
-    // • id (serial)
-    // • email (text not null, unique)
-    // • password (text not null)
-    // • question (text not null)
-    // • answer (text not null)
-    // • name (text not null, unique)
-    // • created_at (tymestamp not null default now)
-    // • login_at (temestamp not null)
-    // • status_2fa (bool not null default false)
-    // • status (AccountStatus not null default active)
-
-
 
 
 } // namespace db::model

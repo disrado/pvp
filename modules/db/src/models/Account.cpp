@@ -1,8 +1,27 @@
 #include "pch.hpp"
 
 #include "db/models/Account.hpp"
-#include "db/models/TypeConversion.hpp"
-#include <algorithm>
+#include "db/TypeConversion.hpp"
+
+
+namespace col
+{
+
+
+static const std::string id{ "id" };
+static const std::string email{ "email" };
+static const std::string password{ "password" };
+static const std::string question{ "question" };
+static const std::string answer{ "answer" };
+static const std::string name{ "name" };
+static const std::string created_at{ "created_at" };
+static const std::string login_at{ "login_at" };
+static const std::string status_2fa{ "status_2fa" };
+static const std::string status{ "status" };
+
+
+} // namespace col
+
 namespace db
 {
 
@@ -21,73 +40,78 @@ Account::Filter::Filter()
 {}
 
 
-std::string Account::Filter::ToSql(const std::string& key, Item<>::Escape escape) const
+std::string Account::Filter::ToSql(Item<>::Escape escape) const
 {
-	std::string sql;
-
-	if (!id.list.empty()) {
-		sql += key;
-	}
-
-	return escape(sql);
+	return fmt::format("{} {} {} {} {} {} {} {} {} {}",
+		id.ToSql(col::id, escape),
+		email.ToSql(col::email, escape),
+		pwd.ToSql(col::password, escape),
+		question.ToSql(col::question, escape),
+		answer.ToSql(col::answer, escape),
+		name.ToSql(col::name, escape),
+		createdAt.ToSql(col::created_at, escape),
+		loginAt.ToSql(col::login_at, escape),
+		status2fa.ToSql(col::status_2fa, escape),
+		status.ToSql(col::status, escape)
+	);
 }
 
 
-ID Account::Id()
+ID Account::Id() const
 {
 	return m_id;
 }
 
 
-std::string Account::Email()
+std::string Account::Email() const
 {
 	return m_email;
 }
 
 
-std::string Account::Pwd()
+std::string Account::Pwd() const
 {
 	return m_pwd;
 }
 
 
-std::string Account::Question()
+std::string Account::Question() const
 {
 	return m_question;
 }
 
 
-std::string Account::Answer()
+std::string Account::Answer() const
 {
 	return m_answer;
 }
 
 
-std::string Account::Name()
+std::string Account::Name() const
 {
 	return m_name;
 }
 
 
-std::string Account::CreatedAt()
+std::string Account::CreatedAt() const
 {
 	return m_createdAt;
 }
 
 
-std::string Account::LoginAt()
+std::string Account::LoginAt() const
 {
 	return m_loginAt;
 }
 
 
-std::string Account::Status2fa()
+std::string Account::Status2fa() const
 {
 	return ToStr(m_status2fa);
 }
 
 
-std::string Account::Status()
+std::string Account::Status() const
 {
 	return ToStr(m_status);
 }

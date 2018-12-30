@@ -18,5 +18,8 @@ using func = std::function<T>;
 using ID = uint64_t;
 using Timestamp = std::string;
 
+class Account;
+
+using Accounts = std::vector<UnPtr<Account>>;
 
 } // namespace db
