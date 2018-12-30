@@ -7,10 +7,10 @@ namespace db
 
 
 template<typename T = std::string>
-class Value
+class Value final
 {
 public:
-	Value(T&& value, bool m_isInverted = false);
+	Value(const T&& value, const bool m_isInverted = false);
 
 	Value(const Value&) = default;
 	Value& operator=(const Value&) = default;
@@ -19,25 +19,26 @@ public:
 	Value& operator=(Value&&) = default;
 
 public:
-	T Get() const;
+	const T& Get() const;
+	void Set(const T&& value);
+	void Invert(const bool isInverted);
 	bool IsInverted() const;
 
 private:
-	T value;
-	bool isInverted = false;
+	T m_value;
+	bool m_isInverted = false;
 };
 
 
 template<typename T = std::string>
-class Item
+class Item final
 {
 public:
 	using Escape = func<std::string(const std::string&)>;
 
 public:
 	Item();
-	explicit Item(const Value<T> value);
-	Item(std::initializer_list<T> list);
+	Item(const std::initializer_list<T>&& list);
 
 	Item(const Item&) = default;
 	Item& operator=(const Item&) = default;
@@ -46,22 +47,28 @@ public:
 	Item& operator=(Item&&) = default;
 
 public:
-	std::list<Value<T>> Get() const;
-	std::string ToSql(const std::string& column, Escape escape) const;
+	const std::list<Value<T>>& Get() const;
+	void Add(const Value<T>&& value);
+	void Remove(const Value<T>&& value);
+	void Clear();
+	bool IsEmpty() const;
+	size_t Size() const;
+	
+	std::string ToSql(const std::string& column, const Escape& escape) const;
 
 private:
-	std::list<Value<T>> list;
+	std::list<Value<T>> m_list;
 };
 
 
 template<typename T = std::string>
-class Range
+class Range final
 {
 public:
 	using Escape = func<std::string(const std::string&)>;
 	
 public:
-	Range(T&& from, T&& to);
+	Range(const T&& from, const T&& to);
 
 	Range(const Range&) = default;
 	Range& operator=(const Range&) = default;
@@ -70,9 +77,12 @@ public:
 	Range& operator=(Range&&) = default;
 
 public:
-	T From() const;
-	T To() const;
-	std::string ToSql(const std::string& column, Escape escape) const;
+	const T& From() const;
+	const T& To() const;
+	void From(const T&& from);
+	void To(const T&& to);
+
+	std::string ToSql(const std::string& column, const Escape& escape) const;
 
 private:
 	Value<T> m_from;

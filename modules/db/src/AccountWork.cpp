@@ -6,14 +6,6 @@
 
 namespace
 {
-
-
-static const std::string table{ "account" };
-
-
-} // namespace
-
-
 namespace col
 {
 
@@ -33,11 +25,17 @@ static const std::string status{ "status" };
 } // namespace col
 
 
+static const std::string table{ "account" };
+
+
+} // namespace
+
+
 namespace db
 {
 
 
-ShPtr<Account> AccountWork::Insert(const Account& acc) const
+UnPtr<Account> AccountWork::Insert(const Account& acc) const
 {
 	const auto query{ fmt::format(
 		"INSERT INTO {} ('{}', {}, {}, {}, {}, {}, {}, {}, {}) "
@@ -86,7 +84,7 @@ Accounts AccountWork::Select(const Account::Filter& filter, const Pager pager) c
 }
 
 
-ShPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) const
+UnPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) const
 {
 	std::vector<std::string> assignments;
 
