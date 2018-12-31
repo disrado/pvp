@@ -19,21 +19,23 @@ public:
 	{
 	public:
 		Filter();
+		Filter(const db::ID p_id);
+		Filter(const std::string& p_email);
 
 	public:
-		std::string ToSql(Item<>::Escape escape) const;
+		std::string ToSql(const ItemList<>::Escape& escape) const;
 
 	public:
-		Item<ID> id;
-		Item<> email;
-		Item<> pwd;
-		Item<> question;
-		Item<> answer;
-		Item<> name;
-		Range<Timestamp> createdAt;
-		Range<Timestamp> loginAt;
-		Item<> status2fa;
-		Item<> status;
+		ItemList<ID> id;
+		ItemList<> email;
+		ItemList<> pwd;
+		ItemList<> question;
+		ItemList<> answer;
+		ItemList<> name;
+		ItemRange<Timestamp> createdAt;
+		ItemRange<Timestamp> loginAt;
+		ItemList<> status2fa;
+		ItemList<> status;
 	};
 
 public:

@@ -7,20 +7,23 @@ namespace db
 
 
 template<typename T = std::string>
-class Value final
+class Item final
 {
 public:
-	Value(const T&& value, const bool m_isInverted = false);
+	Item(const T&& value, const bool m_isInverted = false);
 
-	Value(const Value&) = default;
-	Value& operator=(const Value&) = default;
+	Item(const Item&) = default;
+	Item& operator=(const Item&) = default;
 
-	Value(Value&&) = default;
-	Value& operator=(Value&&) = default;
+	Item(Item&&) = default;
+	Item& operator=(Item&&) = default;
 
 public:
-	const T& Get() const;
-	void Set(const T&& value);
+	T& Value() &;
+	T&& Value() &&;
+	const T& Value() const &;
+	const T&& Value() const &&;
+	
 	void Invert(const bool isInverted);
 	bool IsInverted() const;
 
@@ -31,62 +34,72 @@ private:
 
 
 template<typename T = std::string>
-class Item final
+class ItemList final
 {
 public:
 	using Escape = func<std::string(const std::string&)>;
 
 public:
-	Item();
-	Item(const std::initializer_list<T>&& list);
+	ItemList();
+	ItemList(const std::initializer_list<T>&& list);
 
-	Item(const Item&) = default;
-	Item& operator=(const Item&) = default;
+	ItemList(const ItemList&) = default;
+	ItemList& operator=(const ItemList&) = default;
 
-	Item(Item&&) = default;
-	Item& operator=(Item&&) = default;
+	ItemList(ItemList&&) = default;
+	ItemList& operator=(ItemList&&) = default;
 
 public:
-	const std::list<Value<T>>& Get() const;
-	void Add(const Value<T>&& value);
-	void Remove(const Value<T>&& value);
+	T& Value() &;
+	T&& Value() &&;
+	const T& Value() const &;
+	const T&& Value() const &&;
+
+	void Add(const T& value);
+	void Add(const T&& value);
+
+	void Remove(const T& value);
+	void Remove(const T&& value);
+
 	void Clear();
+	
 	bool IsEmpty() const;
 	size_t Size() const;
 	
 	std::string ToSql(const std::string& column, const Escape& escape) const;
 
 private:
-	std::list<Value<T>> m_list;
+	std::list<Item<T>> m_list;
 };
 
 
 template<typename T = std::string>
-class Range final
+class ItemRange final
 {
 public:
 	using Escape = func<std::string(const std::string&)>;
 	
 public:
-	Range(const T&& from, const T&& to);
+	ItemRange(const T&& from, const T&& to);
 
-	Range(const Range&) = default;
-	Range& operator=(const Range&) = default;
+	ItemRange(const ItemRange&) = default;
+	ItemRange& operator=(const ItemRange&) = default;
 
-	Range(Range&&) = default;
-	Range& operator=(Range&&) = default;
+	ItemRange(ItemRange&&) = default;
+	ItemRange& operator=(ItemRange&&) = default;
 
 public:
 	const T& From() const;
 	const T& To() const;
+
 	void From(const T&& from);
 	void To(const T&& to);
 
 	std::string ToSql(const std::string& column, const Escape& escape) const;
 
 private:
-	Value<T> m_from;
-	Value<T> m_to;
+	Item<T> m_from;
+	Item<T> m_to;
 };
 
 

@@ -14,9 +14,9 @@ static const std::string password{ "password" };
 static const std::string question{ "question" };
 static const std::string answer{ "answer" };
 static const std::string name{ "name" };
-static const std::string created_at{ "created_at" };
-static const std::string login_at{ "login_at" };
-static const std::string status_2fa{ "status_2fa" };
+static const std::string createdAt{ "created_at" };
+static const std::string loginAt{ "login_at" };
+static const std::string status2fa{ "status_2fa" };
 static const std::string status{ "status" };
 
 
@@ -40,7 +40,21 @@ Account::Filter::Filter()
 {}
 
 
-std::string Account::Filter::ToSql(Item<>::Escape escape) const
+Account::Filter::Filter(const db::ID p_id)
+	: Filter{}
+{
+	id.Add(p_id);
+}
+
+
+Account::Filter::Filter(const std::string& p_email)
+	: Filter{}
+{
+	email.Add(p_email);
+}
+
+
+std::string Account::Filter::ToSql(const ItemList<>::Escape& escape) const
 {
 	return fmt::format("{} {} {} {} {} {} {} {} {} {}",
 		id.ToSql(col::id, escape),
@@ -49,9 +63,9 @@ std::string Account::Filter::ToSql(Item<>::Escape escape) const
 		question.ToSql(col::question, escape),
 		answer.ToSql(col::answer, escape),
 		name.ToSql(col::name, escape),
-		createdAt.ToSql(col::created_at, escape),
-		loginAt.ToSql(col::login_at, escape),
-		status2fa.ToSql(col::status_2fa, escape),
+		createdAt.ToSql(col::createdAt, escape),
+		loginAt.ToSql(col::loginAt, escape),
+		status2fa.ToSql(col::status2fa, escape),
 		status.ToSql(col::status, escape)
 	);
 }
