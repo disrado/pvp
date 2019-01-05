@@ -55,12 +55,12 @@ std::string Pager::ToSql() const
 	std::string sql;
 
 	if (m_offset) {
-		sql += "OFFSET " + ToStr(m_offset);
+		sql += "OFFSET " + utils::ToStr(m_offset);
 	}
 
 	if (m_limit) {
 		sql += sql.empty() ? "" : " ";
-		sql += "LIMIT " + ToStr(m_limit);
+		sql += "LIMIT " + utils::ToStr(m_limit);
 	}
 
 	return sql;

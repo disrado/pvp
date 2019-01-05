@@ -6,10 +6,12 @@ include(cotire)
 
 set(${PROJECT_NAME}_HEADERS
 	include/utils/String.hpp
+	include/utils/TypeConversion.hpp
 )
 
 set(${PROJECT_NAME}_SOURCES
-	src/main.cpp
+	src/TypeConversion.cpp
+
 )
 
 set(${PROJECT_NAME}_MISC

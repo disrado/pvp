@@ -67,7 +67,7 @@ UnPtr<Account> AccountWork::Insert(const Account& acc) const
 }
 
 
-Accounts AccountWork::Select(const Account::Filter& filter, const Pager pager) const
+Accounts AccountWork::Select(const Account::Filter& filter, const Pager& pager) const
 {
 	const auto conditions{ filter.ToSql([this] (const std::string& rhs) {
 		return this->Escape(rhs);
@@ -93,7 +93,7 @@ UnPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) co
 	} };
 
 	{
-		addAssignment(col::id, ToStr(id));
+		addAssignment(col::id, utils::ToStr(id));
 		addAssignment(col::email, acc->Email());
 		addAssignment(col::password, acc->Pwd());
 		addAssignment(col::question, acc->Question());

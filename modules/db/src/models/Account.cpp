@@ -4,6 +4,8 @@
 #include "db/TypeConversion.hpp"
 
 
+namespace
+{
 namespace col
 {
 
@@ -21,52 +23,54 @@ static const std::string status{ "status" };
 
 
 } // namespace col
+} // local namespace
+
 
 namespace db
 {
 
 
 Account::Filter::Filter()
-	: id{ 0 }
-	, email{ "" }
-	, pwd{ "" }
-	, question{ "" }
-	, answer{ "" }
-	, name{ "" }
+	: id{}
+	, email{}
+	, pwd{}
+	, question{}
+	, answer{}
+	, name{}
 	, createdAt{ "", "" }
 	, loginAt{ "", "" }
 	, status2fa{ "" }
-	, status{ "" }
+	, status{}
 {}
 
 
 Account::Filter::Filter(const db::ID p_id)
 	: Filter{}
 {
-	id.Add(p_id);
+	id.push_back(db::Item<db::ID>{ p_id });
 }
 
 
 Account::Filter::Filter(const std::string& p_email)
 	: Filter{}
 {
-	email.Add(p_email);
+	email.push_back(p_email);
 }
 
 
-std::string Account::Filter::ToSql(const ItemList<>::Escape& escape) const
+std::string Account::Filter::ToSql(const db::Escape& escape) const
 {
 	return fmt::format("{} {} {} {} {} {} {} {} {} {}",
-		id.ToSql(col::id, escape),
-		email.ToSql(col::email, escape),
-		pwd.ToSql(col::password, escape),
-		question.ToSql(col::question, escape),
-		answer.ToSql(col::answer, escape),
-		name.ToSql(col::name, escape),
-		createdAt.ToSql(col::createdAt, escape),
-		loginAt.ToSql(col::loginAt, escape),
-		status2fa.ToSql(col::status2fa, escape),
-		status.ToSql(col::status, escape)
+		db::ToSql(id, col::id),
+		db::ToSql(email, col::email, escape),
+		db::ToSql(pwd, col::password, escape),
+		db::ToSql(question, col::question, escape),
+		db::ToSql(answer, col::answer, escape),
+		db::ToSql(name, col::name, escape),
+		db::ToSql(createdAt, col::createdAt, escape),
+		db::ToSql(loginAt, col::loginAt, escape),
+		db::ToSql(status2fa, col::status2fa, escape),
+		db::ToSql(status, col::status, escape)
 	);
 }
 
@@ -121,7 +125,7 @@ std::string Account::LoginAt() const
 
 std::string Account::Status2fa() const
 {
-	return ToStr(m_status2fa);
+	return utils::ToStr(m_status2fa);
 }
 
 
@@ -187,7 +191,7 @@ void Account::Status2fa(const bool status2fa)
 
 void Account::Status2fa(const std::string& status2fa)
 {
-	m_status2fa = BoolFromStr(status2fa);
+	m_status2fa = utils::BoolFromStr(status2fa);
 }
 
 

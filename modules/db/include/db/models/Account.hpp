@@ -23,7 +23,7 @@ public:
 		Filter(const std::string& p_email);
 
 	public:
-		std::string ToSql(const ItemList<>::Escape& escape) const;
+		std::string ToSql(const Escape& escape) const;
 
 	public:
 		ItemList<ID> id;
@@ -34,7 +34,7 @@ public:
 		ItemList<> name;
 		ItemRange<Timestamp> createdAt;
 		ItemRange<Timestamp> loginAt;
-		ItemList<> status2fa;
+		Item<> status2fa;
 		ItemList<> status;
 	};
 
