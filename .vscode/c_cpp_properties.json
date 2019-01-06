@@ -10,7 +10,8 @@
                 "/home/nik/sources/pvp/modules/db/include/",
                 "/usr/include/c++/8.2.1/cstdint",
                 "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/56e0cf6d16ee57367a0661ab743f4e43b29223f8/include",
-                "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/038f8796e196b3dba76fcc5fd4ef5d3d9c6866ec/include"
+                "/home/nik/.conan/data/fmt/5.2.0/bincrafters/stable/package/038f8796e196b3dba76fcc5fd4ef5d3d9c6866ec/include",
+                "/home/nik/.conan/data/gtest/1.8.0/bincrafters/stable/package/18b8afbed0c5e159f7c094a39e871dda3b8b455a/include"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

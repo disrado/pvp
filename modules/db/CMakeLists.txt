@@ -39,7 +39,7 @@ add_library(${PROJECT_NAME} SHARED
 	${${PROJECT_NAME}_MISC}
 )
 
-add_library(pvp::db ALIAS ${PROJECT_NAME})
+add_library(pvp::database ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 

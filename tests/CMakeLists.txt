@@ -6,31 +6,28 @@ set(${PROJECT_NAME}_HEADERS
 )
 
 set(${PROJECT_NAME}_SOURCES
-	Init.cpp
-	AccountWork.cpp
+	src/AccountWork.cpp
+	src/Init.cpp
 )
 
 set(${PROJECT_NAME}_MISC
-	pch.hpp
+	src/pch.hpp
 )
 
 include_directories(.)
 add_definitions(-DASSETS_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 
-add_executable(unittests
+add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_HEADERS}
 	${${PROJECT_NAME}_SOURCES}
 	${${PROJECT_NAME}_MISC}
 )
-gtest_discover_tests(unittests)
+gtest_discover_tests(${PROJECT_NAME})
 
-target_link_libraries(unittests
-	CONAN_PKG::gtest,
-	pvp::database,
-	pvp::utilities
+target_link_libraries(${PROJECT_NAME}
+	PUBLIC
+		CONAN_PKG::gtest
+		pvp::database
+		pvp::utilities
 )
 
-# Precompiled header.
-set(COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)
-set_target_properties(unittests PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "pch.hpp")
-cotire(unittests)
