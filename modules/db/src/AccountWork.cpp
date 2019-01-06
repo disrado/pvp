@@ -86,14 +86,14 @@ Accounts AccountWork::Select(const Account::Filter& filter, const Pager& pager) 
 
 UnPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) const
 {
-	std::vector<std::string> assignments;
+	std::list<std::string> assignments;
 
 	const auto addAssignment{ [&assignments] (const std::string& lhs, const std::string& rhs) {
 		return fmt::format("{} = '{}'", lhs, rhs);
 	} };
 
 	{
-		addAssignment(col::id, utils::ToStr(id));
+		addAssignment(col::id, ToStr(id));
 		addAssignment(col::email, acc->Email());
 		addAssignment(col::password, acc->Pwd());
 		addAssignment(col::question, acc->Question());

@@ -67,9 +67,9 @@ std::string Account::Filter::ToSql(const db::Escape& escape) const
 		db::ToSql(question, col::question, escape),
 		db::ToSql(answer, col::answer, escape),
 		db::ToSql(name, col::name, escape),
-		db::ToSql(createdAt, col::createdAt, escape),
-		db::ToSql(loginAt, col::loginAt, escape),
-		db::ToSql(status2fa, col::status2fa, escape),
+		createdAt.ToSql(col::createdAt, escape),
+		loginAt.ToSql(col::loginAt, escape),
+		status2fa.ToSql(col::status2fa),
 		db::ToSql(status, col::status, escape)
 	);
 }
@@ -125,7 +125,7 @@ std::string Account::LoginAt() const
 
 std::string Account::Status2fa() const
 {
-	return utils::ToStr(m_status2fa);
+	return ToStr(m_status2fa);
 }
 
 
@@ -191,7 +191,7 @@ void Account::Status2fa(const bool status2fa)
 
 void Account::Status2fa(const std::string& status2fa)
 {
-	m_status2fa = utils::BoolFromStr(status2fa);
+	m_status2fa = BoolFromStr(status2fa);
 }
 
 

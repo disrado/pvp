@@ -23,7 +23,7 @@ public:
 		Filter(const std::string& p_email);
 
 	public:
-		std::string ToSql(const Escape& escape) const;
+		std::string ToSql(const Escape& escape = nullptr) const;
 
 	public:
 		ItemList<ID> id;

@@ -63,6 +63,19 @@ bool Item<T>::IsInverted() const
 
 
 template<typename T>
+std::string Item<T>::ToSql(std::string_view column, const Escape& escape) const
+{
+	constexpr bool isIntegral{ std::is_integral<typename T::value_type>::value };
+
+	return fmt::format("{} {} {}",
+		column,
+		m_isInverted ? "!=" : "==",
+		isIntegral ? ToStr(m_value) : (escape ? escape(m_value) : m_value)
+	);
+}
+
+
+template<typename T>
 ItemRange<T>::ItemRange(const T&& from, const T&& to)
 	: m_from{ std::forward<T>(from) }
 	, m_to{ std::forward<T>(to) }
@@ -150,6 +163,22 @@ template<typename T>
 void ItemRange<T>::To(const T&& to)
 {
 	m_to = to;
+}
+
+
+template<typename T>
+std::string ItemRange<T>::ToSql(std::string_view column, const Escape& escape) const
+{
+	constexpr bool isIntegral{ std::is_integral<typename T::value_type>::value };
+
+	return fmt::format("{} {} {} AND {} {} {}",
+		column,
+		m_from.IsInverted() ? "<=" : ">=",
+		isIntegral ? ToStr(m_from.Value()) : (escape ? escape(m_from.Value()) : m_from.Value()),
+		column,
+		m_to.IsInverted() ? ">=" : "<=",
+		isIntegral ? ToStr(m_to.Value()) : (escape ? escape(m_to.Value()) : m_to.Value())
+	);
 }
 
 

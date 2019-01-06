@@ -28,6 +28,8 @@ public:
 	void Invert(const bool isInverted);
 	bool IsInverted() const;
 
+	std::string ToSql(std::string_view column, const Escape& escape = nullptr) const;
+
 private:
 	T m_value;
 	bool m_isInverted = false;
@@ -63,6 +65,8 @@ public:
 	const Item<T>& To() const &;
 	const Item<T>&& To() const &&;
 
+	std::string ToSql(std::string_view column, const Escape& escape = nullptr) const;
+
 private:
 	Item<T> m_from;
 	Item<T> m_to;
@@ -72,57 +76,8 @@ private:
 template<typename T = std::string>
 using ItemList = std::list<Item<T>>;
 
-
-template<typename T>
-std::string ToSql(const Item<T>& item, std::string_view col)
-{
-	return fmt::format("{} {} {}",
-		col,
-		item.IsInverted() ? "!=" : "==",
-		utils::ToStr(item.Value())
-	);
-}
-
-
-std::string ToSql(const Item<std::string>& item, std::string_view col, const Escape& escape)
-{
-	return fmt::format("{} {} {}",
-		col,
-		item.IsInverted() ? "!=" : "==",
-		escape(item.Value())
-	);
-}
-
-
-template<typename T>
-std::string ToSql(const ItemRange<T>& range, std::string_view col, const Escape& escape)
-{
-	return fmt::format("{} {} {} AND {} {} {}",
-		col,
-		range.From().IsInverted() ? "<=" : ">=",
-		utils::ToStr(range.From().Value()),
-		col,
-		range.To().IsInverted() ? ">=" : "<=",
-		utils::ToStr(range.To().Value())
-	);
-}
-
-
-std::string ToSql(const ItemRange<std::string>& range, std::string_view col, const Escape& escape)
-{
-	return fmt::format("{} {} {} AND {} {} {}",
-		col,
-		range.From().IsInverted() ? "<=" : ">=",
-		escape(range.From().Value()),
-		col,
-		range.To().IsInverted() ? ">=" : "<=",
-		escape(range.To().Value())
-	);
-}
-
-
-template<template<typename ContainerT> typename Container>
-std::string ToSql(const Container<Item<std::string>>&& list, std::string_view col)
+template<typename ContainerT>
+std::string ToSql(const ContainerT& list, std::string_view column, const Escape& escape = nullptr)
 {
 	if (list.empty()) {
 		return "";
@@ -130,31 +85,8 @@ std::string ToSql(const Container<Item<std::string>>&& list, std::string_view co
 
 	std::vector<std::string> sql(list.size());
 
-	for (const auto& item : list) {
-		sql.push_back(ToSql(item, col));
-	}
-
-	return utils::JoinStrList(sql, " AND ");
-}
-
-
-template<
-	template<typename ContainerT> typename Container,
-	typename ItemType
->
-std::string ToSql(
-	const Container<Item<ItemType>>&& list,
-	std::string_view col,
-	const Escape& escape)
-{
-	if (list.empty()) {
-		return "";
-	}
-
-	std::vector<std::string> sql(list.size());
-
-	for (const auto& item : list) {
-		sql.push_back(ToSql(item, col, escape));
+	for(auto&& item : list) {
+		sql.push_back(item.ToSql(column, escape));
 	}
 
 	return utils::JoinStrList(sql, " AND ");
