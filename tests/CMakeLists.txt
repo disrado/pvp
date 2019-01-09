@@ -6,7 +6,7 @@ set(${PROJECT_NAME}_HEADERS
 )
 
 set(${PROJECT_NAME}_SOURCES
-	src/AccountWork.cpp
+	src/TAccountWork.cpp
 	src/Init.cpp
 )
 
@@ -15,7 +15,6 @@ set(${PROJECT_NAME}_MISC
 )
 
 include_directories(.)
-add_definitions(-DASSETS_ROOT="${CMAKE_CURRENT_SOURCE_DIR}")
 
 add_executable(${PROJECT_NAME}
 	${${PROJECT_NAME}_HEADERS}
@@ -26,8 +25,8 @@ gtest_discover_tests(${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
-		CONAN_PKG::gtest
 		pvp::database
+		CONAN_PKG::gtest
 		pvp::utilities
 )
 

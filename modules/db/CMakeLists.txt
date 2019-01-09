@@ -5,26 +5,21 @@ project(database LANGUAGES CXX)
 include(cotire)
 
 set(${PROJECT_NAME}_HEADERS
+	include/db/models/Account.hpp
+	include/db/models/Filter.hpp
 	include/db/AccountWork.hpp
 	include/db/Aliases.hpp
 	include/db/Pager.hpp
 	include/db/TypeConversion.hpp
 )
 
-set(${PROJECT_NAME}_HEADERS_MODELS
-	include/db/models/Account.hpp
-	include/db/models/Filter.hpp
-)
-
 set(${PROJECT_NAME}_SOURCES
+	src/models/Account.cpp
+	src/models/Filter.inl
+	src/models/Filter.cpp
 	src/AccountWork.cpp
 	src/Pager.cpp
 	src/TypeConversion.cpp
-)
-
-set(${PROJECT_NAME}_SOURCES_MODELS
-	src/models/Account.cpp
-	src/models/Filter.cpp
 )
 
 set(${PROJECT_NAME}_MISC
@@ -33,13 +28,9 @@ set(${PROJECT_NAME}_MISC
 
 add_library(${PROJECT_NAME} SHARED
 	${${PROJECT_NAME}_HEADERS}
-	${${PROJECT_NAME}_HEADERS_MODELS}
 	${${PROJECT_NAME}_SOURCES}
-	${${PROJECT_NAME}_SOURCES_MODELS}
 	${${PROJECT_NAME}_MISC}
 )
-
-add_library(pvp::database ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -52,6 +43,8 @@ target_compile_options(${PROJECT_NAME}
 		$<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:GNU>>:
 			-Wall -Wextra -Werror -Wpedantic -pedantic-errors -pipe>
 )
+
+add_library(pvp::database ALIAS ${PROJECT_NAME})
 
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
@@ -67,7 +60,6 @@ target_include_directories(${PROJECT_NAME}
 		include
 	PRIVATE
 		src
-		${CONAN_LIBS}
 )
 
 set(COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)

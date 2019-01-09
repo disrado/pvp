@@ -3,7 +3,6 @@
 #include "db/models/Account.hpp"
 #include "db/TypeConversion.hpp"
 
-
 namespace
 {
 namespace col
@@ -58,9 +57,9 @@ Account::Filter::Filter(const std::string& p_email)
 }
 
 
-std::string Account::Filter::ToSql(const db::Escape& escape) const
+std::string Account::Filter::ToSql(const Escape& escape) const
 {
-	return fmt::format("{} {} {} {} {} {} {} {} {} {}",
+	return utils::JoinStrList(std::vector<std::string>{
 		db::ToSql(id, col::id),
 		db::ToSql(email, col::email, escape),
 		db::ToSql(pwd, col::password, escape),
@@ -69,9 +68,9 @@ std::string Account::Filter::ToSql(const db::Escape& escape) const
 		db::ToSql(name, col::name, escape),
 		createdAt.ToSql(col::createdAt, escape),
 		loginAt.ToSql(col::loginAt, escape),
-		status2fa.ToSql(col::status2fa),
+		status2fa.ToSql(col::status2fa, escape),
 		db::ToSql(status, col::status, escape)
-	);
+	}, " AND ");
 }
 
 
@@ -204,6 +203,29 @@ void Account::Status(const AccountStatus status)
 void Account::Status(const std::string& status)
 {
 	m_status = AccountStatusFromStr(status);
+}
+
+
+std::string ToStr(const AccountStatus& status)
+{
+	switch(status)
+	{
+		case AccountStatus::ACTIVE: return "ACTIVE";
+		case AccountStatus::DISABLED: return "DISABLED";
+		default: throw std::runtime_error{ "Bad cast" };
+	}
+}
+
+
+AccountStatus AccountStatusFromStr(const std::string& str)
+{
+	if (str == "ACTIVE") {
+		return AccountStatus::ACTIVE;
+	} else if (str == "DISABLED") {
+		return AccountStatus::DISABLED;
+	} else {
+		throw std::runtime_error{ "Bad cast" };
+	}
 }
 
 

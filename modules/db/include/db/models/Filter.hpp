@@ -28,7 +28,8 @@ public:
 	void Invert(const bool isInverted);
 	bool IsInverted() const;
 
-	std::string ToSql(std::string_view column, const Escape& escape = nullptr) const;
+	std::string ToSql(std::string_view column) const;
+	std::string ToSql(std::string_view column, const Escape escape) const;
 
 private:
 	T m_value;
@@ -40,7 +41,7 @@ template<typename T = std::string>
 class ItemRange final
 {
 public:
-	ItemRange(const T&& from, const T&& to);
+	ItemRange(T&& from, T&& to);
 
 	ItemRange(const ItemRange&) = default;
 	ItemRange& operator=(const ItemRange&) = default;
@@ -65,7 +66,9 @@ public:
 	const Item<T>& To() const &;
 	const Item<T>&& To() const &&;
 
-	std::string ToSql(std::string_view column, const Escape& escape = nullptr) const;
+public:
+	std::string ToSql(std::string_view column) const;
+	std::string ToSql(std::string_view, const Escape escape) const;
 
 private:
 	Item<T> m_from;
@@ -76,21 +79,15 @@ private:
 template<typename T = std::string>
 using ItemList = std::list<Item<T>>;
 
-template<typename ContainerT>
-std::string ToSql(const ContainerT& list, std::string_view column, const Escape& escape = nullptr)
-{
-	if (list.empty()) {
-		return "";
-	}
 
-	std::vector<std::string> sql(list.size());
+template<typename T, std::enable_if_t<std::is_integral<T>::value>* = nullptr>
+std::string ToSql(const ItemList<T>& list, const std::string& column);
 
-	for(auto&& item : list) {
-		sql.push_back(item.ToSql(column, escape));
-	}
-
-	return utils::JoinStrList(sql, " AND ");
-}
+template<typename T, std::enable_if_t<!std::is_integral<T>::value>* = nullptr>
+std::string ToSql(const ItemList<T>& list, const std::string& column, db::Escape escape);
 
 
 } // namespace db
+
+
+#include "../../../src/models/Filter.inl"

@@ -12,6 +12,18 @@
 #include <cstdint>
 #include <vector>
 
+//
+// STD
+//
+
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <thread>
+
 
 // fmt
 
@@ -21,6 +33,8 @@
 // flame
 
 #include <pqxx/pqxx>
+#include <flame/utils/Timer.hpp>
+#include <flame/db/Pool.hpp>
 #include <flame/db/Worker.hpp>
 
 

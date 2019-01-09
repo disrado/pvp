@@ -3,7 +3,6 @@
 #include "db/AccountWork.hpp"
 #include "db/TypeConversion.hpp"
 
-
 namespace
 {
 namespace col
@@ -35,30 +34,35 @@ namespace db
 {
 
 
+AccountWork::AccountWork(UnPtr<flm::db::ConnUnit> connection)
+	: Worker{ std::move(connection) }
+{}
+
+
 UnPtr<Account> AccountWork::Insert(const Account& acc) const
 {
 	const auto query{ fmt::format(
-		"INSERT INTO {} ('{}', {}, {}, {}, {}, {}, {}, {}, {}) "
-		"VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', {}, '{}')",
+		"INSERT INTO {} ({}) "
+		"VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')",
 		table,
-		// col::id, ignored because id in table is serial
-		col::email,
-		col::password,
-		col::question,
-		col::answer,
-		col::name,
-		col::created_at,
-		col::login_at,
-		col::status_2fa,
-		col::status,
+		utils::JoinStrList({
+			// col::id, ignored because id in table is serial
+			col::email,
+			col::password,
+			col::question,
+			col::answer,
+			col::name,
+			col::login_at,
+			col::status_2fa,
+			col::status
+		}, ", "),
 		// acc.Id(), ignored because id in table is serial
 		acc.Email(),
 		acc.Pwd(),
 		acc.Question(),
 		acc.Answer(),
 		acc.Name(),
-		acc.CreatedAt(),
-		acc.LoginAt(),
+		"NOW()",
 		acc.Status2fa(),
 		acc.Status()
 	) };

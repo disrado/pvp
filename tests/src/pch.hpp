@@ -15,6 +15,16 @@
 #include <vector>
 
 
+// flame.utils includes
+#include <atomic>
+#include <chrono>
+#include <condition_variable>
+#include <functional>
+#include <memory>
+#include <mutex>
+#include <thread>
+
+
 // fmt
 
 #include <fmt/format.h>
@@ -24,6 +34,8 @@
 
 #include <pqxx/pqxx>
 #include <flame/db/Worker.hpp>
+#include <flame/utils/Timer.hpp>
+#include <flame/db/Pool.hpp>
 
 
 // modules
@@ -35,13 +47,3 @@
 // gtest
 
 #include <gtest/gtest.h>
-
-
-// db
-
-#include <db/models/Account.hpp>
-#include <db/models/Filter.hpp>
-#include <db/AccountWork.hpp>
-#include <db/Aliases.hpp>
-#include <db/Pager.hpp>
-#include <db/TypeConversion.hpp>

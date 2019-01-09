@@ -17,11 +17,6 @@ template<typename T>
 using func = std::function<T>;
 
 
-class Account;
-
-using Accounts = std::vector<UnPtr<Account>>;
-
-
 using ID = uint64_t;
 using Timestamp = std::string;
 using Escape = func<std::string(const std::string&)>;

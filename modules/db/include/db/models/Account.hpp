@@ -1,6 +1,5 @@
 #pragma once
 
-#include "db/Aliases.hpp"
 #include "db/models/Filter.hpp"
 
 namespace db
@@ -77,4 +76,11 @@ public:
 };
 
 
-} // namespace db::model
+using Accounts = std::vector<UnPtr<Account>>;
+
+
+std::string ToStr(const AccountStatus& status);
+AccountStatus AccountStatusFromStr(const std::string& str);
+
+
+} // namespace db
