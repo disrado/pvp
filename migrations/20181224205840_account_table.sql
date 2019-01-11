@@ -7,10 +7,10 @@ CREATE TABLE account(
 	question TEXT NOT NULL,
 	answer TEXT NOT NULL,
 	name TEXT NOT NULL,
-	created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_at TIMESTAMP NOT NULL,
 	login_at TIMESTAMP NOT NULL,
-	status_2fa BOOLEAN NOT NULL DEFAULT FALSE,
-	status TEXT NOT NULL DEFAULT 'ACTIVE',
+	status_2fa BOOLEAN NOT NULL,
+	status TEXT NOT NULL,
 	PRIMARY KEY(id),
 	UNIQUE(email)
 );

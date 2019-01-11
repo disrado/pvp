@@ -10,6 +10,7 @@ template<typename T = std::string>
 class Item final
 {
 public:
+	Item() = default;
 	Item(const T& value, const bool m_isInverted = false);
 	Item(const T&& value, const bool m_isInverted = false);
 
@@ -27,6 +28,7 @@ public:
 	
 	void Invert(const bool isInverted);
 	bool IsInverted() const;
+	bool IsInited() const;
 
 	std::string ToSql(std::string_view column) const;
 	std::string ToSql(std::string_view column, const Escape escape) const;
@@ -34,6 +36,7 @@ public:
 private:
 	T m_value;
 	bool m_isInverted = false;
+	bool m_isInitialized = false;
 };
 
 
@@ -41,7 +44,9 @@ template<typename T = std::string>
 class ItemRange final
 {
 public:
-	ItemRange(T&& from, T&& to);
+	ItemRange() = default;
+	ItemRange(const T& from, const T& to);
+	ItemRange(const T&& from, const T&& to);
 
 	ItemRange(const ItemRange&) = default;
 	ItemRange& operator=(const ItemRange&) = default;
@@ -69,6 +74,8 @@ public:
 public:
 	std::string ToSql(std::string_view column) const;
 	std::string ToSql(std::string_view, const Escape escape) const;
+
+	bool IsInited() const;
 
 private:
 	Item<T> m_from;

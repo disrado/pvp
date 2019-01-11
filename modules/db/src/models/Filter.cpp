@@ -7,9 +7,9 @@ namespace db
 template<>
 std::string Item<std::string>::ToSql(std::string_view column, const db::Escape escape) const
 {
-	return fmt::format("{} {} {}",
+	return fmt::format("{} {} '{}'",
 		column,
-		m_isInverted ? "!=" : "==",
+		m_isInverted ? "!=" : "=",
 		escape(m_value)
 	);
 }
@@ -18,13 +18,34 @@ std::string Item<std::string>::ToSql(std::string_view column, const db::Escape e
 template<>
 std::string ItemRange<std::string>::ToSql(std::string_view column, const db::Escape escape) const
 {
-	return fmt::format("{} {} {} AND {} {} {}",
-		column,
-		m_from.IsInverted() ? "<=" : ">=",
-		escape(m_from.Value()),
-		column,
-		m_to.IsInverted() ? ">=" : "<=",
-		escape(m_to.Value())
+	const std::string from{ [this, &column, escape] () -> std::string {
+		if (!m_from.IsInited()) {
+			return "";
+		}
+
+		return fmt::format("{} {} '{}'",
+			column,
+			m_from.IsInverted() ? "<=" : ">=",
+			escape(m_from.Value())
+		);
+	}() };
+
+	const std::string to{ [this, &column, escape] () -> std::string {
+		if (!m_from.IsInited()) {
+			return "";
+		}
+
+		return fmt::format("{} {} '{}'",
+			column,
+			m_to.IsInverted() ? ">=" : "<=",
+			escape(m_from.Value())
+		);
+	}() };
+
+	return fmt::format("{}{}{}",
+		from,
+		(!from.empty() && !to.empty()) ? " AND " : "",
+		to
 	);
 }
 

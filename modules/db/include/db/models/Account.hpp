@@ -7,8 +7,8 @@ namespace db
 
 enum class AccountStatus
 {
-	ACTIVE,
-	DISABLED
+	Active,
+	Disabled
 };
 
 struct Account
@@ -36,6 +36,21 @@ public:
 		Item<> status2fa;
 		ItemList<> status;
 	};
+
+public:
+	Account();
+	Account(
+		db::ID id,
+		std::string email,
+		std::string pwd,
+		std::string question,
+		std::string answer,
+		std::string name,
+		Timestamp createdAt,
+		Timestamp loginAt,
+		bool status2fa,
+		AccountStatus status
+	);
 
 public:
 	ID Id() const;

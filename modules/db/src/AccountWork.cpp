@@ -3,6 +3,8 @@
 #include "db/AccountWork.hpp"
 #include "db/TypeConversion.hpp"
 
+#include "logger/Logger.hpp"
+
 namespace
 {
 namespace col
@@ -43,30 +45,33 @@ UnPtr<Account> AccountWork::Insert(const Account& acc) const
 {
 	const auto query{ fmt::format(
 		"INSERT INTO {} ({}) "
-		"VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')",
+		"VALUES('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}') "
+		"RETURNING *",
 		table,
 		utils::JoinStrList({
-			// col::id, ignored because id in table is serial
+			// col::id, serial in db
 			col::email,
 			col::password,
 			col::question,
 			col::answer,
 			col::name,
+			col::created_at,
 			col::login_at,
 			col::status_2fa,
 			col::status
 		}, ", "),
-		// acc.Id(), ignored because id in table is serial
+		// acc.Id(), serial in db
 		acc.Email(),
 		acc.Pwd(),
 		acc.Question(),
 		acc.Answer(),
 		acc.Name(),
-		"NOW()",
+		"NOW()",// acc.CreatedAt(),
+		"NOW()",// acc.LoginAt(),
 		acc.Status2fa(),
 		acc.Status()
 	) };
-
+	
 	return std::move(ExtractModels(Execute(query)).at(0));
 }
 
@@ -77,9 +82,9 @@ Accounts AccountWork::Select(const Account::Filter& filter, const Pager& pager) 
 		return this->Escape(rhs);
 	}) };
 
-	const auto query{ fmt::format( "SELECT FROM {} {} ORDER BY {} DESC {}",
+	const auto query{ fmt::format( "SELECT * FROM {} {} ORDER BY {} DESC {}",
 		table,
-		conditions.empty() ? "" : conditions,
+		conditions.empty() ? "" : ("WHERE " + conditions),
 		col::id,
 		pager.ToSql()
 	) };
@@ -145,23 +150,19 @@ Accounts AccountWork::ExtractModels(const flm::db::DbResult& result) const
 {
 	Accounts accounts{};
 
-	for(const auto& row : result)
-	{
-		auto acc{ std::make_unique<Account>() };
-		{
-			acc->Id(row[col::id].as<db::ID>());
-			acc->Email(row[col::email].as<std::string>());
-			acc->Pwd(row[col::password].as<std::string>());
-			acc->Question(row[col::question].as<std::string>());
-			acc->Answer(row[col::answer].as<std::string>());
-			acc->Name(row[col::name].as<std::string>());
-			acc->CreatedAt(row[col::created_at].as<std::string>());
-			acc->LoginAt(row[col::login_at].as<std::string>());
-			acc->Status2fa(row[col::status_2fa].as<std::string>());
-			acc->Status(row[col::status].as<std::string>());
-		}
-
-		accounts.push_back(std::move(acc));
+	for(const auto& row : result) {
+		accounts.push_back(std::make_unique<Account>(
+			row[col::id].as<db::ID>(),
+			row[col::email].as<std::string>(),
+			row[col::password].as<std::string>(),
+			row[col::question].as<std::string>(),
+			row[col::answer].as<std::string>(),
+			row[col::name].as<std::string>(),
+			row[col::created_at].as<Timestamp>(),
+			row[col::login_at].as<Timestamp>(),
+			row[col::status_2fa].as<bool>(),
+			AccountStatusFromStr(row[col::status].as<std::string>())
+		));
 	}
 
 	return accounts;

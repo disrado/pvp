@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/build/VisualTest.cpp",
+            "program": "${workspaceFolder}/build/gcc-x64-Debug/bin/UnitTests",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

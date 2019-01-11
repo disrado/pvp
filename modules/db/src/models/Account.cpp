@@ -46,7 +46,7 @@ Account::Filter::Filter()
 Account::Filter::Filter(const db::ID p_id)
 	: Filter{}
 {
-	id.push_back(db::Item<db::ID>{ p_id });
+	id.push_back(Item<ID>{ p_id });
 }
 
 
@@ -59,19 +59,73 @@ Account::Filter::Filter(const std::string& p_email)
 
 std::string Account::Filter::ToSql(const Escape& escape) const
 {
-	return utils::JoinStrList(std::vector<std::string>{
-		db::ToSql(id, col::id),
-		db::ToSql(email, col::email, escape),
-		db::ToSql(pwd, col::password, escape),
-		db::ToSql(question, col::question, escape),
-		db::ToSql(answer, col::answer, escape),
-		db::ToSql(name, col::name, escape),
-		createdAt.ToSql(col::createdAt, escape),
-		loginAt.ToSql(col::loginAt, escape),
-		status2fa.ToSql(col::status2fa, escape),
-		db::ToSql(status, col::status, escape)
-	}, " AND ");
+	std::list<std::string> conditions;
+
+	if (!id.empty()) {
+		conditions.push_back(db::ToSql(id, col::id));
+	}
+	if (!email.empty()) {
+		conditions.push_back(db::ToSql(email, col::email, escape));
+	}
+	if (!pwd.empty()) {
+		conditions.push_back(db::ToSql(pwd, col::password, escape));
+	}
+	if (!question.empty()) {
+		conditions.push_back(db::ToSql(question, col::question, escape));
+	}
+	if (!answer.empty()) {
+		conditions.push_back(db::ToSql(answer, col::answer, escape));
+	}
+	if (!name.empty()) {
+		conditions.push_back(db::ToSql(name, col::name, escape));
+	}
+	if (!createdAt.IsInited()) {
+		conditions.push_back(createdAt.ToSql(col::createdAt, escape));
+	}
+	if (!loginAt.IsInited()) {
+		conditions.push_back(loginAt.ToSql(col::loginAt, escape));
+	}
+	if (!status2fa.IsInited()) {
+		conditions.push_back(status2fa.ToSql(col::status2fa, escape));
+	}
+	if (!status.empty()) {
+		conditions.push_back(db::ToSql(status, col::status, escape));
+	}
+
+	return utils::JoinStrList(conditions, " AND ");
 }
+
+
+Account::Account()
+	: m_id{ 0 }
+	, m_status2fa{ false }
+	, m_status{ AccountStatus::Active }
+{}
+
+
+Account::Account(
+		db::ID id,
+		std::string email,
+		std::string pwd,
+		std::string question,
+		std::string answer,
+		std::string name,
+		Timestamp createdAt,
+		Timestamp loginAt,
+		bool status2fa,
+		AccountStatus status
+)
+	: m_id{ id }
+	, m_email{ email }
+	, m_pwd{ pwd }
+	, m_question{ question }
+	, m_answer{ answer }
+	, m_name{ name }
+	, m_createdAt{ createdAt }
+	, m_loginAt{ loginAt }
+	, m_status2fa{ status2fa }
+	, m_status{ status }
+{}
 
 
 ID Account::Id() const
@@ -210,8 +264,8 @@ std::string ToStr(const AccountStatus& status)
 {
 	switch(status)
 	{
-		case AccountStatus::ACTIVE: return "ACTIVE";
-		case AccountStatus::DISABLED: return "DISABLED";
+		case AccountStatus::Active: return "Active";
+		case AccountStatus::Disabled: return "Disabled";
 		default: throw std::runtime_error{ "Bad cast" };
 	}
 }
@@ -219,10 +273,10 @@ std::string ToStr(const AccountStatus& status)
 
 AccountStatus AccountStatusFromStr(const std::string& str)
 {
-	if (str == "ACTIVE") {
-		return AccountStatus::ACTIVE;
-	} else if (str == "DISABLED") {
-		return AccountStatus::DISABLED;
+	if (str == "Active") {
+		return AccountStatus::Active;
+	} else if (str == "Disabled") {
+		return AccountStatus::Disabled;
 	} else {
 		throw std::runtime_error{ "Bad cast" };
 	}

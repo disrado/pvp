@@ -10,6 +10,7 @@ template<typename T>
 Item<T>::Item(const T& value, const bool isInverted)
 	: m_value{ value }
 	, m_isInverted{ isInverted }
+	, m_isInitialized{ true }
 {}
 
 
@@ -17,6 +18,7 @@ template<typename T>
 Item<T>::Item(const T&& value, const bool isInverted)
 	: m_value{ std::move(value) }
 	, m_isInverted{ isInverted }
+	, m_isInitialized{ true }
 {}
 
 
@@ -63,20 +65,38 @@ bool Item<T>::IsInverted() const
 
 
 template<typename T>
+bool Item<T>::IsInited() const
+{
+	return m_isInitialized;
+}
+
+
+template<typename T>
 std::string Item<T>::ToSql(std::string_view column) const
 {
-	return fmt::format("{} {} {}",
+	if (!m_isInitialized) {
+		return "";
+	}
+
+	return fmt::format("{} {} '{}'",
 		column,
-		m_isInverted ? "!=" : "==",
+		m_isInverted ? "!=" : "=",
 		ToStr(m_value)
 	);
 }
 
 
 template<typename T>
-ItemRange<T>::ItemRange(T&& from, T&& to)
-	: m_from{ std::forward<T>(from) }
-	, m_to{ std::forward<T>(to) }
+ItemRange<T>::ItemRange(const T& from, const T& to)
+	: m_from{ from }
+	, m_to{ to }
+{}
+
+
+template<typename T>
+ItemRange<T>::ItemRange(const T&& from, const T&& to)
+	: m_from{ std::move(from) }
+	, m_to{ std::move(to) }
 {}
 
 
@@ -167,14 +187,41 @@ void ItemRange<T>::To(const T&& to)
 template<typename T>
 std::string ItemRange<T>::ToSql(std::string_view column) const
 {
-	return fmt::format("{} {} {} AND {} {} {}",
-		column,
-		m_from.IsInverted() ? "<=" : ">=",
-		ToStr(m_from.Value()),
-		column,
-		m_to.IsInverted() ? ">=" : "<=",
-		ToStr(m_to.Value())
+	const std::string from{ [this, &column] {
+		if (!m_from.IsInited()) {
+			return "";
+		}
+
+		return fmt::format("{} {} '{}'",
+			column,
+			m_from.IsInverted() ? "<=" : ">=",
+			ToStr(m_from.Value())
+		);
+	}() };
+
+	const std::string to{ [this, &column] {
+		if (!m_from.IsInited()) {
+			return "";
+		}
+
+		return fmt::format("{} {} '{}'",
+			column,
+			m_to.IsInverted() ? ">=" : "<=",
+			ToStr(m_from.Value())
+		);
+	}() };
+
+	return fmt::format("{}{}{}",
+		from,
+		(!from.empty() && !to.empty()) ? " AND " : "",
+		to
 	);
+}
+
+template<typename T>
+bool ItemRange<T>::IsInited() const
+{
+	return m_from.IsInited() || m_to.IsInited();
 }
 
 
@@ -185,7 +232,8 @@ std::string ToSql(const ItemList<T>& list, const std::string& column)
 		return "";
 	}
 
-	std::vector<std::string> sql(list.size());
+	std::vector<std::string> sql;
+	sql.reserve(list.size());
 
 	for(auto&& item : list) {
 		sql.push_back(item.ToSql(column));
@@ -202,7 +250,8 @@ std::string ToSql(const ItemList<T>& list, const std::string& column, db::Escape
 		return "";
 	}
 
-	std::vector<std::string> sql(list.size());
+	std::vector<std::string> sql;
+	sql.reserve(list.size());
 
 	for(auto&& item : list) {
 		sql.push_back(item.ToSql(column, escape));
