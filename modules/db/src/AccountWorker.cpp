@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "db/AccountWork.hpp"
+#include "db/AccountWorker.hpp"
 #include "db/TypeConversion.hpp"
 
 #include "logger/Logger.hpp"
@@ -36,12 +36,28 @@ namespace db
 {
 
 
-AccountWork::AccountWork(UnPtr<flm::db::ConnUnit> connection)
-	: Worker{ std::move(connection) }
-{}
+AccountWorker::AccountWorker(const bool autocommit)
+	: Worker{ autocommit }
+{
+
+}
 
 
-UnPtr<Account> AccountWork::Insert(const Account& acc) const
+AccountWorker::AccountWorker(ShPtr<flm::db::ConnUnit> connection, const bool autocommit)
+	: Worker{ std::move(connection), autocommit }
+{
+
+}
+
+
+AccountWorker::AccountWorker(UnPtr<flm::db::ConnUnit> connection, const bool autocommit)
+	: Worker{ std::move(connection), autocommit }
+{
+
+}
+
+
+UnPtr<Account> AccountWorker::Insert(const Account& acc) const
 {
 	const auto query{ fmt::format(
 		"INSERT INTO {} ({}) "
@@ -76,7 +92,7 @@ UnPtr<Account> AccountWork::Insert(const Account& acc) const
 }
 
 
-Accounts AccountWork::Select(const Account::Filter& filter, const Pager& pager) const
+Accounts AccountWorker::Select(const Account::Filter& filter, const Pager& pager) const
 {
 	const auto conditions{ filter.ToSql([this] (const std::string& rhs) {
 		return this->Escape(rhs);
@@ -93,7 +109,7 @@ Accounts AccountWork::Select(const Account::Filter& filter, const Pager& pager) 
 }
 
 
-UnPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) const
+UnPtr<Account> AccountWorker::Update(const db::ID id, const ShPtr<Account> acc) const
 {
 	std::list<std::string> assignments;
 
@@ -125,7 +141,7 @@ UnPtr<Account> AccountWork::Update(const db::ID id, const ShPtr<Account> acc) co
 }
 
 
-bool AccountWork::Delete(const db::ID id) const
+bool AccountWorker::Delete(const db::ID id) const
 {
 	const auto query{ fmt::format( "DELETE FROM {} WHERE id = {}", table, id) };
 
@@ -133,7 +149,7 @@ bool AccountWork::Delete(const db::ID id) const
 }
 
 
-size_t AccountWork::Count(const Account::Filter& filter) const
+size_t AccountWorker::Count(const Account::Filter& filter) const
 {
 	auto conditions{ filter.ToSql([this] (const std::string& rhs) {
 		return this->Escape(rhs);
@@ -146,7 +162,7 @@ size_t AccountWork::Count(const Account::Filter& filter) const
 }
 
 
-Accounts AccountWork::ExtractModels(const flm::db::DbResult& result) const
+Accounts AccountWorker::ExtractModels(const flm::db::DbResult& result) const
 {
 	Accounts accounts{};
 

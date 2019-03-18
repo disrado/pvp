@@ -7,7 +7,7 @@ include(cotire)
 set(${PROJECT_NAME}_HEADERS
 	include/db/models/Account.hpp
 	include/db/models/Filter.hpp
-	include/db/AccountWork.hpp
+	include/db/AccountWorker.hpp
 	include/db/Aliases.hpp
 	include/db/Pager.hpp
 	include/db/TypeConversion.hpp
@@ -17,7 +17,7 @@ set(${PROJECT_NAME}_SOURCES
 	src/models/Account.cpp
 	src/models/Filter.inl
 	src/models/Filter.cpp
-	src/AccountWork.cpp
+	src/AccountWorker.cpp
 	src/Pager.cpp
 	src/TypeConversion.cpp
 )
