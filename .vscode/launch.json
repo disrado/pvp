@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Test",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/gcc-x64-Debug/bin/UnitTests",

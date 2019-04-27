@@ -4,6 +4,8 @@
 #include "db/models/Filter.hpp"
 #include "db/models/Account.hpp"
 
+#include <iostream>
+
 namespace test
 {
 
@@ -12,6 +14,7 @@ static const std::string email{ "n.maltsev.dis82@gmail.com" };
 
 
 }
+
 
 TEST(Account, Insert)
 {
@@ -33,6 +36,7 @@ TEST(Account, Insert)
 	EXPECT_NE(result, nullptr);
 }
 
+
 TEST(Account, Select)
 {
 	const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
@@ -41,35 +45,40 @@ TEST(Account, Select)
 	EXPECT_FALSE(work.Select(filter).empty());
 }
 
+
 TEST(Account, Update)
 {
-	// const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
-	// auto filter{ db::Account::Filter{ test::email } };
-	// auto accs{ work.Select(filter) };
-	
-	// const std::shared_ptr<db::Account> acc{ std::move(accs.at(0)) };
-	// acc->Name("Nik");
+	const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
+	auto filter{ db::Account::Filter{ test::email } };
+	auto accs{ work.Select(filter) };
 
-	// auto result{ work.Update(acc->Id(), std::move(acc)) };
-	// work.Commit();
+	const std::shared_ptr<db::Account> acc{ std::move(accs.at(0)) };
+	acc->Name("Nik");
 
-	// EXPECT_EQ(result->Name(), "Nik");
+	auto result{ work.Update(acc->Id(), std::move(acc)) };
+	work.Commit();
+
+	EXPECT_EQ(result->Name(), "Nik");
 }
+
 
 TEST(Account, Count)
 {
-	// const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
-	// auto filter{ db::Account::Filter{ test::email } };
+	const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
+	auto filter{ db::Account::Filter{ test::email } };
 
-	// EXPECT_NE(work.Count(filter), 0);
+	EXPECT_NE(work.Count(filter), 0);
 }
+
 
 TEST(Account, Delete)
 {
-	// const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
-	// auto filter{ db::Account::Filter{ test::email } };
-	// auto accs{ work.Select(filter) };
+	const auto work{ db::AccountWork{ flm::db::Pool::Inst().Acquire() } };
+	auto filter{ db::Account::Filter{ test::email } };
+	auto accs{ work.Select(filter) };
 
-	// EXPECT_TRUE(work.Delete(accs.at(0)->Id()));
-	// work.Commit();
+	std::cout << std::endl << std::endl << accs.size() << std::endl;
+
+	EXPECT_TRUE(work.Delete(accs.at(0)->Id()));
+	work.Commit();
 }
