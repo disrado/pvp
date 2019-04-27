@@ -7,10 +7,12 @@ namespace db
 {
 
 
-class AccountWork : public flm::db::Worker
+class AccountWorker : public flm::db::Worker
 {
 public:
-	AccountWork(UnPtr<flm::db::ConnUnit> connection);
+	AccountWorker(const bool autocommit = true);
+	AccountWorker(ShPtr<flm::db::ConnUnit> connection, const bool autocommit = true);
+	AccountWorker(UnPtr<flm::db::ConnUnit> connection, const bool autocommit = true);
 
 public:
 	UnPtr<Account> Insert(const Account& acc) const;
