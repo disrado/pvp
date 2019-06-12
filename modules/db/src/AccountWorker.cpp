@@ -11,16 +11,16 @@ namespace col
 {
 
 
-static const std::string id{ "id" };
-static const std::string email{ "email" };
-static const std::string password{ "password" };
-static const std::string question{ "question" };
-static const std::string answer{ "answer" };
-static const std::string name{ "name" };
+static const std::string id        { "id" };
+static const std::string email     { "email" };
+static const std::string password  { "password" };
+static const std::string question  { "question" };
+static const std::string answer    { "answer" };
+static const std::string name      { "name" };
 static const std::string created_at{ "created_at" };
-static const std::string login_at{ "login_at" };
+static const std::string login_at  { "login_at" };
 static const std::string status_2fa{ "status_2fa" };
-static const std::string status{ "status" };
+static const std::string status    { "status" };
 
 
 } // namespace col
@@ -114,7 +114,7 @@ UnPtr<Account> AccountWorker::Update(const db::ID id, const ShPtr<Account> acc) 
 	std::list<std::string> assignments;
 
 	const auto addAssignment{ [&assignments] (const std::string& lhs, const std::string& rhs) {
-		return fmt::format("{} = '{}'", lhs, rhs);
+		assignments.push_back(fmt::format("{} = '{}'", lhs, rhs));
 	} };
 
 	{
@@ -130,12 +130,8 @@ UnPtr<Account> AccountWorker::Update(const db::ID id, const ShPtr<Account> acc) 
 		addAssignment(col::status, acc->Status());
 	}
 
-	const auto query{ fmt::format(
-		"UPDATE {} SET {} WHERE id = {} {}",
-		table,
-		utils::JoinStrList(assignments, ", "),
-		id
-	) };
+	const auto query{ fmt::format("UPDATE {} SET {} WHERE id = {} RETURNING * ",
+		table, utils::JoinStrList(assignments, ", "), id ) };
 
 	return std::move(ExtractModels(Execute(query)).at(0));
 }
@@ -144,6 +140,9 @@ UnPtr<Account> AccountWorker::Update(const db::ID id, const ShPtr<Account> acc) 
 bool AccountWorker::Delete(const db::ID id) const
 {
 	const auto query{ fmt::format( "DELETE FROM {} WHERE id = {}", table, id) };
+	
+	
+	lg::LOG(lg::Severity::info) << Execute(query).empty();
 
 	return Execute(query).affected_rows();
 }
