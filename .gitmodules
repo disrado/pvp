@@ -4,3 +4,4 @@
 [submodule "extern/flame"]
 	path = extern/flame
 	url = https://github.com/disrado/FlameEngine.git
+	branch = feature/ecs
