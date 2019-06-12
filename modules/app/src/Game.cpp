@@ -48,11 +48,10 @@ void Game::Run() const
     }
 
     const auto drawSystem{ std::make_shared<DrawSystem>(render) };
-    {
-        // drawSystem->GetRoot()->AddChild(entity, 1);
-        drawSystem->GetRoot()->AddChild(entity2, 0);
-    }
     
+    auto id{ drawSystem->GetRoot()->AddChild(entity, 1) };
+    drawSystem->GetRoot()->AddChild(entity2, 0);
+
     const auto world{ std::make_unique<flm::World>() };
     {
         world->AddSystem(drawSystem, 1);
@@ -64,7 +63,9 @@ void Game::Run() const
         float dt{ 0 };
         if (SDL_PollEvent(&event)) {
             if (event.type == SDL_MOUSEBUTTONUP) {
-                entity2->GetComponent<TransformComponent>()->rotation += 1;
+                drawSystem->GetRoot()->GetChild(id1)->Apply([] (std::shared_ptr<flm::Entity> entity) {
+                    entity->GetComponent<TransformComponent>()->rotation += 5;
+                });
             }
             if (event.type == SDL_KEYDOWN) {
                 exit(1);

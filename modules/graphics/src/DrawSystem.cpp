@@ -24,7 +24,7 @@ bool DrawSystem::Node::operator<(const DrawSystem::Node& other) const
 flm::Id DrawSystem::Node::AddChild(std::shared_ptr<flm::Entity> entity, int64_t drawOrder)
 {
     const auto node{ std::make_shared<DrawSystem::Node>() };
-    node->m_entity = entity;
+    node->entity = entity;
     node->drawOrder = drawOrder;
     node->m_parent = shared_from_this();
     
@@ -38,10 +38,22 @@ flm::Id DrawSystem::Node::AddChild(std::shared_ptr<flm::Entity> entity, int64_t 
 }
 
 
-bool DrawSystem::Node::RemoveChild(const flm::Id id)
+std::shared_ptr<DrawSystem::Node> DrawSystem::Node::GetChild(flm::Id id)
+{
+    for (auto child : m_children) {
+        if (child->id == id) {
+            return child;
+        }
+    }
+
+    return nullptr;
+}
+
+
+bool DrawSystem::Node::RemoveChild(flm::Id id)
 {
     const auto it{ std::find_if(std::begin(m_children), std::end(m_children),
-        [id] (const auto& child) { return child->m_entity->id == id; })
+        [id] (const auto& child) { return child->entity->id == id; })
     };
 
     if (it != std::end(m_children)) {
@@ -55,8 +67,9 @@ bool DrawSystem::Node::RemoveChild(const flm::Id id)
 
 void DrawSystem::Node::Apply(std::function<void(std::shared_ptr<flm::Entity>)> function)
 {
+    function(entity);
+    
     for(const auto& child : m_children) {
-        function(m_entity);
         child->Apply(function);
     }
 }
@@ -68,12 +81,12 @@ void DrawSystem::Node::Draw(std::shared_ptr<Render> render, const float dt)
         child->Draw(render, dt);
     }
 
-    if (!m_entity) {
+    if (!entity) {
         return;
     }
 
-    const auto transform{ m_entity->GetComponent<TransformComponent>() };
-    const auto texture{ m_entity->GetComponent<TextureComponent>() };
+    const auto transform{ entity->GetComponent<TransformComponent>() };
+    const auto texture{ entity->GetComponent<TextureComponent>() };
 
     if (!texture || !transform) {
         return;

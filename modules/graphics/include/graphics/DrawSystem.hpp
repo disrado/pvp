@@ -21,18 +21,20 @@ private:
 
         flm::Id AddChild(std::shared_ptr<flm::Entity> entity, int64_t drawOrder);
 
-        bool RemoveChild(const flm::Id id);
+        std::shared_ptr<DrawSystem::Node> GetChild(flm::Id id);
+
+        bool RemoveChild(flm::Id id);
 
         void Apply(std::function<void(std::shared_ptr<flm::Entity>)> function);
 
         void Draw(std::shared_ptr<Render> render, const float dt);
 
     public:
+        const flm::Id id = flm::UniqueId();
         int64_t drawOrder = 0;
-        std::shared_ptr<flm::Entity> m_entity = nullptr;
+        std::shared_ptr<flm::Entity> entity = nullptr;
 
     private:
-        const flm::Id id = flm::UniqueId();
         std::weak_ptr<Node> m_parent;
         std::vector<std::shared_ptr<Node>> m_children = {};
     };
