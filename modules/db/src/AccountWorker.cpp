@@ -145,7 +145,7 @@ bool AccountWorker::Delete(const db::ID id) const
 {
 	const auto query{ fmt::format( "DELETE FROM {} WHERE id = {}", table, id) };
 
-	return !(Execute(query).empty());
+	return Execute(query).affected_rows();
 }
 
 
