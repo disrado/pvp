@@ -1,11 +1,17 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(database LANGUAGES CXX)
+project(system LANGUAGES CXX)
 
 include(cotire)
 
+set(${PROJECT_NAME}_HEADERS
+	include/system/Color.hpp
+	include/system/Size.hpp
+	include/system/Vector2.hpp
+)
+
 set(${PROJECT_NAME}_SOURCES
-	src/AccountWork.cpp
+	src/main.cpp
 )
 
 set(${PROJECT_NAME}_MISC
@@ -13,11 +19,11 @@ set(${PROJECT_NAME}_MISC
 )
 
 add_library(${PROJECT_NAME} SHARED
-		${${PROJECT_NAME}_SOURCES}
-		${${PROJECT_NAME}_MISC}
+	${${PROJECT_NAME}_HEADERS}
+	${${PROJECT_NAME}_SOURCES}
+	${${PROJECT_NAME}_WORKERS_SOURCES}
+	${${PROJECT_NAME}_MISC}
 )
-
-add_library(pvp::db ALIAS ${PROJECT_NAME})
 
 target_compile_features(${PROJECT_NAME} PUBLIC cxx_std_17)
 
@@ -33,19 +39,14 @@ target_compile_options(${PROJECT_NAME}
 
 target_link_libraries(${PROJECT_NAME}
 	PUBLIC
-		flame::db
-		logger
-	PRIVATE
-		${CONAN_LIBS}
-
+        ${CONAN_LIBS}
 )
 
 target_include_directories(${PROJECT_NAME}
 	PUBLIC
-		include
-	PRIVATE
-		src
 		${CONAN_LIBS}
+		${PROJECT_SOURCE_DIR}/include
+		${PROJECT_SOURCE_DIR}/src
 )
 
 set(COTIRE_MINIMUM_NUMBER_OF_TARGET_SOURCES 1)

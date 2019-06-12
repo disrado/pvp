@@ -14,7 +14,9 @@ set(EXTERNAL_DIR ${CMAKE_SOURCE_DIR}/extern)
 
 add_subdirectory(extern/flame)
 add_subdirectory(extern/logger)
-add_subdirectory(modules/db)
+add_subdirectory(modules/system)
+add_subdirectory(modules/graphics)
+add_subdirectory(modules/app)
 
 if (ENABLE_TESTING)
 	enable_testing()
