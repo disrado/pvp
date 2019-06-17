@@ -32,3 +32,8 @@ using namespace std::string_literals;
 
 #include <ecs/Entity.hpp>
 #include <ecs/System.hpp>
+
+
+// flame/scene_graph
+
+#include <scene_graph/Node.hpp>

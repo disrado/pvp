@@ -46,6 +46,7 @@ target_link_libraries(${PROJECT_NAME}
         ${CONAN_LIBS}
         system
         flame::ecs
+        flame::scene_graph
 )
 
 target_include_directories(${PROJECT_NAME}

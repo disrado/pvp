@@ -13,5 +13,12 @@ struct TransformComponent
 
 struct TextureComponent
 {
+    TextureComponent() = default;
+
+    TextureComponent(const std::string& path, std::shared_ptr<Render> render)
+    {
+        texture = std::make_shared<Texture>(path, render);
+    }
+
     std::shared_ptr<Texture> texture = nullptr;
 };

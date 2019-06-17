@@ -2,60 +2,79 @@
 
 #include "app/Game.hpp"
 
+using std::make_shared;
+
 void Game::Run() const
 {
     SDL_Init(SDL_INIT_EVERYTHING);
 
-    auto render{ std::make_shared<Render>(
-        std::make_unique<Window>("game", Vector2i{ 200, 200 }, Size{ 720, 480 }),
+    auto render{ make_shared<Render>(
+        std::make_unique<Window>("game", Vector2i{ 200, 200 }, Size{ 1920, 1080 }),
         Color{ 0, 0, 0, 255 }
     ) };
 
-    const auto entity{ std::make_shared<flm::Entity>() };
+    auto world{ std::make_unique<flm::World>() };
+
+    auto backgroundLayer{ make_shared<flm::Node<flm::Entity>>() };
     {
-        auto transformComponent{ std::make_shared<TransformComponent>() };
+        auto backgroundTransform{ make_shared<TransformComponent>() };
+
+        auto sky{ world->CreateEntity() };
         {
-            transformComponent->position = Vector2f{ 100, 100 };
-            transformComponent->rotation = 45;
-            transformComponent->scale = Vector2f{ 1.5, 1.5 };
+            sky->AddComponent<TransformComponent>(make_shared<TransformComponent>());
+            sky->AddComponent<TextureComponent>(make_shared<TextureComponent>("Sky.png", render));
+        }
+        auto bgDecor{ world->CreateEntity() };
+        {
+            bgDecor->AddComponent<TransformComponent>(make_shared<TransformComponent>());
+            bgDecor->AddComponent<TextureComponent>(make_shared<TextureComponent>("BG_Decor.png", render));
+        }
+        auto midDecor{ world->CreateEntity() };
+        {
+            midDecor->AddComponent<TransformComponent>(make_shared<TransformComponent>());
+            midDecor->AddComponent<TextureComponent>(make_shared<TextureComponent>("Middle_Decor.png", render));
+        }
+        auto foreground{ world->CreateEntity() };
+        {
+            foreground->AddComponent<TransformComponent>(make_shared<TransformComponent>());
+            foreground->AddComponent<TextureComponent>(make_shared<TextureComponent>("Foreground.png", render));
+        }
+        auto ground{ world->CreateEntity() };
+        {
+            ground->AddComponent<TransformComponent>(make_shared<TransformComponent>());
+            ground->AddComponent<TextureComponent>(make_shared<TextureComponent>("Ground.png", render));
         }
 
-        auto textureComponent{ std::make_shared<TextureComponent>() };
-        {
-            textureComponent->texture = std::make_shared<Texture>("picture.png", render);
-        }
-
-        entity->AddComponent<TransformComponent>(transformComponent);
-        entity->AddComponent<TextureComponent>(textureComponent);
+        backgroundLayer->AddChild(sky, 5);
+        backgroundLayer->AddChild(bgDecor, 4);
+        backgroundLayer->AddChild(midDecor, 3);
+        backgroundLayer->AddChild(foreground, 3);
+        backgroundLayer->AddChild(ground, 3);
     }
 
-    const auto entity2{ std::make_shared<flm::Entity>() };
+    auto gameplayLayer{ make_shared<flm::Node<flm::Entity>>() };
     {
-        auto transformComponent{ std::make_shared<TransformComponent>() };
+        auto character{ world->CreateEntity() };
         {
-            transformComponent->position = Vector2f{ 110, 110 };
-            transformComponent->rotation = 64;
-            transformComponent->scale = Vector2f{ 1.6, 1.6 };
+            auto transform{ make_shared<TransformComponent>() };
+            {
+                transform->scale = Vector2f{ 0.5, 0.5 };
+                transform->position = Vector2f{ 10, 400 };
+            }
+            character->AddComponent<TransformComponent>(transform);
+            character->AddComponent<TextureComponent>(make_shared<TextureComponent>("1_IDLE_000.png", render));
+
         }
 
-        auto textureComponent{ std::make_shared<TextureComponent>() };
-        {
-            textureComponent->texture = std::make_shared<Texture>("picture.png", render);
-        }
-
-        entity2->AddComponent<TransformComponent>(transformComponent);
-        entity2->AddComponent<TextureComponent>(textureComponent);
+        gameplayLayer->AddChild(character, 0);
     }
 
-    const auto drawSystem{ std::make_shared<DrawSystem>(render) };
-    
-    auto id{ drawSystem->GetRoot()->AddChild(entity, 1) };
-    drawSystem->GetRoot()->AddChild(entity2, 0);
-
-    const auto world{ std::make_unique<flm::World>() };
+    auto drawSystem{ make_shared<DrawSystem>(render) };
     {
-        world->AddSystem(drawSystem, 1);
+        drawSystem->Root()->AddChild(backgroundLayer);
+        drawSystem->Root()->AddChild(gameplayLayer);
     }
+    world->AddSystem(drawSystem, 1);
 
     SDL_Event event;
 
@@ -63,11 +82,6 @@ void Game::Run() const
         float dt{ 0 };
         if (SDL_PollEvent(&event)) {
             if (event.type == SDL_MOUSEBUTTONUP) {
-                drawSystem->GetRoot()->GetChild(id1)->Apply([] (std::shared_ptr<flm::Entity> entity) {
-                    entity->GetComponent<TransformComponent>()->rotation += 5;
-                });
-            }
-            if (event.type == SDL_KEYDOWN) {
                 exit(1);
             }
         }

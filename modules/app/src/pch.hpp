@@ -29,10 +29,15 @@
 #include <ecs/Entity.hpp>
 #include <ecs/System.hpp>
 
+
+// flame/scene_graph
+
+#include <scene_graph/Node.hpp>
+
+
 // graphics
 
 #include <graphics/Components.hpp>
 #include <graphics/DrawSystem.hpp>
 #include <graphics/Render.hpp>
 #include <graphics/Window.hpp>
-

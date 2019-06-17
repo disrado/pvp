@@ -17,8 +17,3 @@ add_subdirectory(extern/logger)
 add_subdirectory(modules/system)
 add_subdirectory(modules/graphics)
 add_subdirectory(modules/app)
-
-if (ENABLE_TESTING)
-	enable_testing()
-	add_subdirectory(tests)
-endif ()
